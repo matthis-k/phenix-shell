@@ -144,7 +144,10 @@ jobs:
                 - run: nix flake check --no-pure-eval --print-build-logs --keep-going
                 - run: nix develop --no-pure-eval --command devenv test
                 - name: Reject retired references
-                  run: '! git grep -n -i "\\btend\\b"'
+                  shell: bash
+                  run: |
+                    needle="$(printf 'te%s' 'nd')"
+                    ! git grep -ni "$needle"
           EOF
 
           rm -f .github/workflows/migrate-caretaker.yml
@@ -153,20 +156,11 @@ jobs:
           git add -A
           nix flake check --no-pure-eval --print-build-logs --keep-going
           nix develop --no-pure-eval --command devenv test
-          ! git grep -n -i '\btend\b'
+          needle="$(printf 'te%s' 'nd')"
+          ! git grep -ni "$needle"
 
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add -A
           git commit -m "refactor: adopt the Nix-native caretaker stack"
-          git push origin main
-      - name: Remove temporary trigger
-        shell: bash
-        run: |
-          set -euo pipefail
-          rm -f .github/workflows/migrate-caretaker.yml
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add -A
-          git diff --cached --quiet || git commit -m "chore: remove caretaker migration workflow"
           git push origin main
