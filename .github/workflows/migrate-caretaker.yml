@@ -21,6 +21,8 @@ jobs:
           extra_nix_config: |
             experimental-features = nix-command flakes
             accept-flake-config = true
+            extra-substituters = https://devenv.cachix.org
+            extra-trusted-public-keys = devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=
       - name: Install Nix-native caretaker stack
         shell: bash
         run: |
@@ -29,6 +31,13 @@ jobs:
           cat > flake.nix <<'EOF'
           {
             description = "Shared Phenix development shell conventions";
+
+            nixConfig = {
+              extra-substituters = [ "https://devenv.cachix.org" ];
+              extra-trusted-public-keys = [
+                "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
+              ];
+            };
 
             inputs = {
               devenv-root = { url = "file+file:///dev/null"; flake = false; };
@@ -141,6 +150,8 @@ jobs:
                     extra_nix_config: |
                       experimental-features = nix-command flakes
                       accept-flake-config = true
+                      extra-substituters = https://devenv.cachix.org
+                      extra-trusted-public-keys = devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=
                 - run: nix flake check --no-pure-eval --print-build-logs --keep-going
                 - run: nix develop --no-pure-eval --command devenv test
                 - name: Reject retired references
