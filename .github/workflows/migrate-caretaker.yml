@@ -6,6 +6,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: caretaker-${{ github.repository }}
+  cancel-in-progress: true
+
 jobs:
   migrate:
     if: github.event.pull_request.head.repo.full_name == github.repository
@@ -114,7 +118,10 @@ jobs:
               "check:format" = { exec = "treefmt --fail-on-change"; before = [ "devenv:enterTest" ]; };
               "check:statix" = { exec = "statix check --ignore .git/**"; before = [ "devenv:enterTest" ]; };
               "check:deadnix" = { exec = "deadnix --fail --no-lambda-arg --no-lambda-pattern-names"; before = [ "devenv:enterTest" ]; };
-              "check:flake" = { exec = "nix flake check --no-pure-eval --print-build-logs --keep-going"; before = [ "devenv:enterTest" ]; };
+              "check:flake" = {
+                exec = ''nix flake check --override-input devenv-root "file+file://"<(printf %s "$PWD") --print-build-logs --keep-going'';
+                before = [ "devenv:enterTest" ];
+              };
               "fix:format".exec = "treefmt";
               "fix:statix".exec = "statix fix";
               "fix:deadnix".exec = "deadnix --edit --no-lambda-arg --no-lambda-pattern-names";
@@ -152,8 +159,10 @@ jobs:
                       accept-flake-config = true
                       extra-substituters = https://devenv.cachix.org
                       extra-trusted-public-keys = devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=
-                - run: nix flake check --no-pure-eval --print-build-logs --keep-going
-                - run: nix develop --no-pure-eval --command devenv test
+                - shell: bash
+                  run: nix flake check --override-input devenv-root "file+file://"<(printf %s "$PWD") --print-build-logs --keep-going
+                - shell: bash
+                  run: nix develop --override-input devenv-root "file+file://"<(printf %s "$PWD") --command devenv test
                 - name: Reject retired references
                   shell: bash
                   run: |
@@ -165,8 +174,8 @@ jobs:
           git add -A
           nix flake update
           git add -A
-          nix flake check --no-pure-eval --print-build-logs --keep-going
-          nix develop --no-pure-eval --command devenv test
+          nix flake check --override-input devenv-root "file+file://"<(printf %s "$PWD") --print-build-logs --keep-going
+          nix develop --override-input devenv-root "file+file://"<(printf %s "$PWD") --command devenv test
           needle="$(printf 'te%s' 'nd')"
           ! git grep -ni "$needle"
 
