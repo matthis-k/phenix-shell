@@ -6,32 +6,55 @@ in
 {
   scripts = {
     "maintenance-check-format" = {
-      packages = [ pkgs.findutils pkgs.git pkgs.nixfmt ];
-      exec = ''${root}; ${nixSources} -exec nixfmt --check {} +'';
+      packages = [
+        pkgs.findutils
+        pkgs.git
+        pkgs.nixfmt
+      ];
+      exec = "${root}; ${nixSources} -exec nixfmt --check {} +";
     };
     "maintenance-check-statix" = {
-      packages = [ pkgs.git pkgs.statix ];
-      exec = ''${root}; statix check --ignore '.git/**' '';
+      packages = [
+        pkgs.git
+        pkgs.statix
+      ];
+      exec = "${root}; statix check --ignore '.git/**' ";
     };
     "maintenance-check-deadnix" = {
-      packages = [ pkgs.deadnix pkgs.git ];
-      exec = ''${root}; deadnix --fail --no-lambda-arg --no-lambda-pattern-names'';
+      packages = [
+        pkgs.deadnix
+        pkgs.git
+      ];
+      exec = "${root}; deadnix --fail --no-lambda-arg --no-lambda-pattern-names";
     };
     "maintenance-check-flake" = {
-      packages = [ pkgs.git pkgs.nix ];
-      exec = ''${root}; nix flake check --print-build-logs --keep-going'';
+      packages = [
+        pkgs.git
+        pkgs.nix
+      ];
+      exec = "${root}; nix flake check --print-build-logs --keep-going";
     };
     "maintenance-fix-statix" = {
-      packages = [ pkgs.git pkgs.statix ];
-      exec = ''${root}; statix fix'';
+      packages = [
+        pkgs.git
+        pkgs.statix
+      ];
+      exec = "${root}; statix fix";
     };
     "maintenance-fix-deadnix" = {
-      packages = [ pkgs.deadnix pkgs.git ];
-      exec = ''${root}; deadnix --edit --no-lambda-arg --no-lambda-pattern-names'';
+      packages = [
+        pkgs.deadnix
+        pkgs.git
+      ];
+      exec = "${root}; deadnix --edit --no-lambda-arg --no-lambda-pattern-names";
     };
     "maintenance-fix-format" = {
-      packages = [ pkgs.findutils pkgs.git pkgs.nixfmt ];
-      exec = ''${root}; ${nixSources} -exec nixfmt {} +'';
+      packages = [
+        pkgs.findutils
+        pkgs.git
+        pkgs.nixfmt
+      ];
+      exec = "${root}; ${nixSources} -exec nixfmt {} +";
     };
   };
 
