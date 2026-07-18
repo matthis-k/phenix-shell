@@ -1,18 +1,9 @@
 _: {
+  imports = [ ./flake-module.nix ];
+
   perSystem =
-    { pkgs, ... }:
+    { config, ... }:
     {
-      devShells.default = pkgs.mkShell {
-        packages = with pkgs; [
-          devenv
-          git
-          nix
-        ];
-        shellHook = ''
-          echo "phenix-shell"
-          echo "  maintenance: devenv test"
-          echo "  fixes:       devenv tasks run maintenance:fix"
-        '';
-      };
+      devShells.default = config.devShells.phenix;
     };
 }
