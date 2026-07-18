@@ -1,13 +1,18 @@
 _: {
-  perSystem = _: {
-    phenix.overlays = [
-      (final: prev: {
-        phenix = (prev.phenix or { }) // {
-          hello-shell = final.writeShellScriptBin "hello-shell" ''
-            echo "hello from shell"
-          '';
-        };
-      })
-    ];
-  };
+  perSystem =
+    { pkgs, ... }:
+    {
+      devShells.phenix = pkgs.mkShell {
+        packages = with pkgs; [
+          devenv
+          git
+          nix
+        ];
+        shellHook = ''
+          echo "phenix-shell"
+          echo "  maintenance: devenv test"
+          echo "  fixes:       devenv tasks run maintenance:fix"
+        '';
+      };
+    };
 }
