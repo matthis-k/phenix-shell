@@ -210,7 +210,7 @@
       packages.phenix-maintenance = maintenancePackage.package;
       apps.phenix-maintenance = maintenancePackage.app;
 
-      devShells.default = pkgs.mkShell {
+      devShells.maintenance = pkgs.mkShell {
         name = "phenix-shell-dev";
         packages = [
           pkgs.git
